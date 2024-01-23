@@ -33,21 +33,49 @@ export async function createImage(
     'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
   );
 
-  const replaced: string[] = [];
-  for (const match of title.matchAll(texRegex)) {
-    replaced.push(match[1]);
+  const emojis: Record<string, string> = {
+    '🅰': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f170.svg',
+    '➕': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2795.svg',
+    '🅱': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f171.svg',
+  };
+  const emojiReplacement: Record<string, string> = {};
+  await Promise.all(
+    Object.keys(emojis).map(async (key) => {
+      if (title.includes(key)) {
+        return await fetch(emojis[key])
+          .then((r) => r.text())
+          .then(
+            (svg) =>
+              (emojiReplacement[key] = svg.replace(
+                '<svg',
+                '<svg height="108"',
+              )),
+          );
+      }
+    }),
+  );
+  let emojiTitle = title;
+  for (const key in emojiReplacement) {
+    emojiTitle = emojiTitle.replaceAll(
+      key,
+      (substr) => emojiReplacement[substr],
+    );
+  }
+  const mathReplacement: string[] = [];
+  for (const match of emojiTitle.matchAll(texRegex)) {
+    mathReplacement.push(match[1]);
   }
   const tex: Record<string, string> = await fetch(
     'https://tex.jacob.workers.dev/json',
     {
       method: 'POST',
       body: JSON.stringify({
-        tex: replaced,
+        tex: mathReplacement,
         key: true,
       }),
     },
   ).then((r) => r.json());
-  const mathTitle = title.replaceAll(texRegex, (substr, math) =>
+  const mathTitle = emojiTitle.replaceAll(texRegex, (substr, math) =>
     tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`),
   );
   const styledTitle = juice(mathTitle);
@@ -124,5 +152,9 @@ export async function createImage(
       embedFont: true,
     },
   );
-  return new Resvg(svg, {}).render().asPng();
+  return new Resvg(svg, {
+    imageRendering: 1,
+  })
+    .render()
+    .asPng();
 }
