@@ -3,8 +3,7 @@ import juice from 'juice';
 import satori from 'satori';
 import parseHTML from 'html-react-parser';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
-// @ts-ignore
-import resvgWasm from '../../node_modules/@resvg/resvg-wasm/index_bg.wasm?module';
+import resvgWasm from '@resvg/resvg-wasm/index_bg.wasm';
 
 function loadFont(url: string) {
   return fetch(url).then((r) => r.arrayBuffer());
@@ -17,7 +16,11 @@ let init = false;
 export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!init) {
     init = true;
-    const res = await fetch(new URL(resvgWasm, request.url));
+    const hack = resvgWasm.replace(
+      '/build/_assets',
+      '/build/vercel/path0/_assets'
+    );
+    const res = await fetch(new URL(hack, request.url));
     await initWasm(res.arrayBuffer());
   }
   const pretendardRegular = await loadFont(
