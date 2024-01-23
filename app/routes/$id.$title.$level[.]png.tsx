@@ -3,7 +3,8 @@ import juice from 'juice';
 import satori from 'satori';
 import parseHTML from 'html-react-parser';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
-import resvgWasm from '@resvg/resvg-wasm/index_bg.wasm';
+// @ts-ignore
+import resvgWasm from '../../node_modules/@resvg/resvg-wasm/index_bg.wasm?module';
 
 function loadFont(url: string) {
   return fetch(url).then((r) => r.arrayBuffer());
@@ -20,10 +21,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     await initWasm(res.arrayBuffer());
   }
   const pretendardRegular = await loadFont(
-    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
+    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff'
   );
   const pretendardBold = await loadFont(
-    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
+    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff'
   );
   const id = params.id;
   const title = params.title!;
@@ -40,10 +41,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         tex: replaced,
         key: true,
       }),
-    },
+    }
   ).then((r) => r.json());
   const mathTitle = title.replaceAll(texRegex, (substr, math) =>
-    tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`),
+    tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`)
   );
   const styledTitle = juice(mathTitle);
   const htmlTitle = parseHTML(styledTitle);
@@ -109,7 +110,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         },
       ],
       embedFont: true,
-    },
+    }
   );
   const pngData = new Resvg(svg, {}).render();
   return new Response(pngData.asPng(), {
