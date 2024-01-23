@@ -1,9 +1,9 @@
-import { LoaderFunctionArgs } from "@vercel/remix";
-import juice from "juice";
-import satori from "satori";
-import parseHTML from "html-react-parser";
-import { Resvg, initWasm } from "@resvg/resvg-wasm";
-import resvgWasm from "@resvg/resvg-wasm/index_bg.wasm";
+import { LoaderFunctionArgs } from '@vercel/remix';
+import juice from 'juice';
+import satori from 'satori';
+import parseHTML from 'html-react-parser';
+import { Resvg, initWasm } from '@resvg/resvg-wasm';
+import resvgWasm from '@resvg/resvg-wasm/index_bg.wasm';
 
 function loadFont(url: string) {
   return fetch(url).then((r) => r.arrayBuffer());
@@ -20,10 +20,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     await initWasm(res.arrayBuffer());
   }
   const pretendardRegular = await loadFont(
-    "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff"
+    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
   );
   const pretendardBold = await loadFont(
-    "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff"
+    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
   );
   const id = params.id;
   const title = params.title!;
@@ -33,41 +33,41 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     replaced.push(match[1]);
   }
   const tex: Record<string, string> = await fetch(
-    "https://tex.jacob.workers.dev/json",
+    'https://tex.jacob.workers.dev/json',
     {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
         tex: replaced,
         key: true,
       }),
-    }
+    },
   ).then((r) => r.json());
   const mathTitle = title.replaceAll(texRegex, (substr, math) =>
-    tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`)
+    tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`),
   );
   const styledTitle = juice(mathTitle);
   const htmlTitle = parseHTML(styledTitle);
   const icon = await fetch(`https://static.solved.ac/tier_small/${level}.svg`)
     .then((r) => r.text())
-    .then((svg) => svg.replaceAll(/[가-힣]/g, ""));
+    .then((svg) => svg.replaceAll(/[가-힣]/g, ''));
   const svg = await satori(
     <div
       style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "Pretendard",
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Pretendard',
       }}
     >
       <div
         style={{
           fontSize: 64,
-          display: "flex",
+          display: 'flex',
           gap: 12,
-          justifyContent: "center",
+          justifyContent: 'center',
         }}
       >
         <img
@@ -75,19 +75,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
           height="72"
           style={{
             lineHeight: 72,
-            verticalAlign: "middle",
+            verticalAlign: 'middle',
           }}
-        />{" "}
+        />{' '}
         <span>{id}</span>
       </div>
       <div
         style={{
-          display: "flex",
+          display: 'flex',
           maxWidth: 1000,
           fontSize: 108,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         }}
       >
         {htmlTitle}
@@ -98,24 +98,24 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       height: 630,
       fonts: [
         {
-          name: "Pretendard",
+          name: 'Pretendard',
           data: pretendardRegular,
           weight: 400,
         },
         {
-          name: "Pretendard",
+          name: 'Pretendard',
           data: pretendardBold,
           weight: 600,
         },
       ],
       embedFont: true,
-    }
+    },
   );
   const pngData = new Resvg(svg, {}).render();
   return new Response(pngData.asPng(), {
     status: 200,
     headers: {
-      "Content-Type": "image/png",
+      'Content-Type': 'image/png',
     },
   });
 }
