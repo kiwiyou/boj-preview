@@ -1,15 +1,17 @@
 import { LoaderFunctionArgs, MetaFunction, json } from '@vercel/remix';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  const tier = new URL(request.url).searchParams.get('tier');
   const solvedData = await fetch(
     `https://solved.ac/api/v3/problem/show?problemId=${params.id}`
   );
   if (!solvedData.ok) throw new Response('Not Found', { status: 404 });
   const solvedJson: any = await solvedData.json();
   const level =
-    solvedJson.level === 0 && solvedJson.isLevelLocked
+    tier &&
+    (solvedJson.level === 0 && solvedJson.isLevelLocked
       ? 'nr'
-      : solvedJson.level;
+      : solvedJson.level);
   return json({
     origin: new URL(request.url).origin,
     id: params.id,
@@ -18,9 +20,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const title = `${data?.id}번: ${data?.title}`;
   const url = `https://acmicpc.net/problem/${data?.id}`;
+  const og = new URL(
+    data?.level
+      ? `/${data?.id}/${data?.title}/${data?.level}.png`
+      : `/${data?.id}/${data?.title}.png`,
+    data?.origin
+  ).toString();
   return [
     {
       httpEquiv: 'refresh',
@@ -47,10 +55,7 @@ export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
     },
     {
       property: 'og:image',
-      content: new URL(
-        `/${data?.id}/${data?.title}/${data?.level}.png`,
-        data?.origin
-      ).toString(),
+      content: og,
     },
     {
       property: 'twitter:card',
@@ -74,10 +79,7 @@ export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
     },
     {
       property: 'twitter:image',
-      content: new URL(
-        `/${data?.id}/${data?.title}/${data?.level}.png`,
-        data?.origin
-      ).toString(),
+      content: og,
     },
   ];
 };
