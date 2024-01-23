@@ -100,6 +100,7 @@ export async function createImage(
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
+          fontWeight: 600,
         }}
       >
         {htmlTitle}
