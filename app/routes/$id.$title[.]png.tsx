@@ -2,11 +2,7 @@ import { LoaderFunctionArgs } from '@vercel/remix';
 import { createImage } from '~/utils/createImage.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const image = await createImage(
-    request.url,
-    params.id!,
-    params.title!,
-  );
+  const image = await createImage(request.url, params.id!, params.title!);
   return new Response(image, {
     status: 200,
     headers: {

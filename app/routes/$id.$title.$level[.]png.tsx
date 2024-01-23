@@ -6,7 +6,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     request.url,
     params.id!,
     params.title!,
-    params.level!
+    params.level!,
   );
   return new Response(image, {
     status: 200,
