@@ -2,7 +2,7 @@ import { LoaderFunctionArgs, MetaFunction, json } from '@vercel/remix';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const solvedData = await fetch(
-    `https://solved.ac/api/v3/problem/show?problemId=${params.id}`,
+    `https://solved.ac/api/v3/problem/show?problemId=${params.id}`
   );
   if (!solvedData.ok) throw new Response('Not Found', { status: 404 });
   const solvedJson: any = await solvedData.json();
@@ -20,23 +20,63 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
   const title = `${data?.id}번: ${data?.title}`;
+  const url = `https://acmicpc.net/problem/${data?.id}`;
   return [
     {
       httpEquiv: 'refresh',
-      content: `0; url=https://acmicpc.net/problem/${data?.id}`,
+      content: `0; url=${url}`,
     },
     {
       title,
+    },
+    {
+      name: 'description',
+      content: '',
+    },
+    {
+      property: 'og:url',
+      content: url,
     },
     {
       property: 'og:title',
       content: title,
     },
     {
+      property: 'og:description',
+      content: '',
+    },
+    {
       property: 'og:image',
       content: new URL(
         `/${data?.id}/${data?.title}/${data?.level}.png`,
-        data?.origin,
+        data?.origin
+      ).toString(),
+    },
+    {
+      property: 'twitter:card',
+      content: 'summary_large_image',
+    },
+    {
+      property: 'twitter:domain',
+      content: 'acmicpc.net',
+    },
+    {
+      property: 'twitter:url',
+      content: url,
+    },
+    {
+      property: 'twitter:title',
+      content: title,
+    },
+    {
+      property: 'twitter:description',
+      content: '',
+    },
+    {
+      property: 'twitter:image',
+      content: new URL(
+        `/${data?.id}/${data?.title}/${data?.level}.png`,
+        data?.origin
       ).toString(),
     },
   ];
