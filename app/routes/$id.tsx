@@ -20,9 +20,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
   const title = `${data?.id}번: ${data?.title}`;
-  const url = `https://acmicpc.net/problem/${data?.id}`;
+  const url = new URL(location.pathname, data?.origin).toString();
   const og = new URL(
     data?.level
       ? `/${data?.id}/${encodeURIComponent(data?.title)}/${data?.level}.png`
