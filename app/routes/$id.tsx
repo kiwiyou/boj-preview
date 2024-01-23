@@ -25,8 +25,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const url = `https://acmicpc.net/problem/${data?.id}`;
   const og = new URL(
     data?.level
-      ? `/${data?.id}/${data?.title}/${data?.level}.png`
-      : `/${data?.id}/${data?.title}.png`,
+      ? `/${data?.id}/${encodeURIComponent(data?.title)}/${data?.level}.png`
+      : `/${data?.id}/${encodeURIComponent(data?.title)}.png`,
     data?.origin
   ).toString();
   return [
