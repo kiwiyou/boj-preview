@@ -14,11 +14,15 @@
     "@remix-run/node": "^2.0.0",
     "@remix-run/react": "^2.0.0",
     "@remix-run/serve": "^2.0.0",
+    "@resvg/resvg-wasm": "^2.6.0",
     "@vercel/analytics": "^1.0.2",
     "@vercel/remix": "^2.0.0",
+    "html-react-parser": "^5.1.1",
     "isbot": "^3.6.8",
+    "juice": "^10.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "satori": "^0.10.11"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.0.0",
