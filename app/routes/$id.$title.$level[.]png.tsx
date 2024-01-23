@@ -64,6 +64,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: 'Pretendard',
+        backgroundColor: 'white',
       }}
     >
       <div
