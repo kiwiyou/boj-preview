@@ -10,7 +10,7 @@ function loadFont(url: string) {
   return fetch(url).then((r) => r.arrayBuffer());
 }
 
-function expandSvg(element: string | JSX.Element): string | JSX.Element {
+function hrefToBase64(element: string | JSX.Element): string | JSX.Element {
   if (typeof element === 'string') {
     return element;
   }
@@ -34,7 +34,44 @@ function expandSvg(element: string | JSX.Element): string | JSX.Element {
     return cloneElement(
       element,
       {},
-      ...[element.props.children].flat().map(expandSvg),
+      ...[element.props.children].flat().map(hrefToBase64),
+    );
+  }
+  return element;
+}
+
+function expandHref(element: string | JSX.Element): string | JSX.Element {
+  if (typeof element === 'string') {
+    return element;
+  }
+  if (element.type === 'image') {
+    let expanded;
+    if (element.props.href.startsWith('data:image/svg+xml;utf8,')) {
+      expanded = decodeURIComponent(
+        element.props.href
+          .slice('data:image/svg+xml;utf8,'.length)
+          .replace(/ /g, '%20'),
+      );
+    } else {
+      expanded = atob(
+        element.props.href.slice('data:image/svg+xml;base64,'.length),
+      );
+    }
+    const nested = parseHTML(expanded);
+    const c = nested.props.children
+      ? [nested.props.children].flat().map(expandHref)
+      : undefined;
+    return cloneElement(
+      nested,
+      { ...element.props, ...nested.props, mask: '' },
+      c,
+    );
+  }
+  if (element.props.children) {
+    return cloneElement(
+      element,
+      {},
+      [element.props.children].flat().map(expandHref),
     );
   }
   return element;
@@ -173,6 +210,8 @@ export async function createImage(
           fontSize: 54,
           fontWeight: 600,
           textAlign: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         {htmlTitle}
@@ -192,6 +231,7 @@ export async function createImage(
           fontWeight: 600,
           textAlign: 'center',
           alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         {htmlTitle}
@@ -212,7 +252,7 @@ export async function createImage(
     }
   }
   const subSvg = cloneElement(
-    expandSvg(parseHTML(titleSvg) as JSX.Element),
+    hrefToBase64(parseHTML(titleSvg) as JSX.Element),
     size,
   );
   const icon =
@@ -264,8 +304,9 @@ export async function createImage(
       embedFont: true,
     },
   );
-  return new Resvg(svg, {
+  return new Resvg(renderToStaticMarkup(expandHref(parseHTML(svg))), {
     imageRendering: 1,
+    shapeRendering: 2,
   })
     .render()
     .asPng();
