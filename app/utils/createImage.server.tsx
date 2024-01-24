@@ -131,7 +131,7 @@ export async function createImage(
         style={{
           display: 'flex',
           width: 1000,
-          fontSize: 108,
+          fontSize: 54,
           fontWeight: 600,
           textAlign: 'center',
         }}
