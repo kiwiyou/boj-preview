@@ -19,7 +19,10 @@ export async function createImage(
 ) {
   if (!init) {
     init = true;
-    const hack = resvgWasm.replace('/build/_assets', '/build/_assets');
+    const hack = resvgWasm.replace(
+      '/build/_assets',
+      '/build/vercel/path0/_assets',
+    );
     const res = await fetch(new URL(hack, url));
     await initWasm(res.arrayBuffer());
   }
