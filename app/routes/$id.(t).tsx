@@ -14,7 +14,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     : undefined;
   return json({
     origin: new URL(request.url).origin,
-    id: solvedJson.id,
+    id: solvedJson.problemId,
     title: solvedJson.titleKo,
     level,
   });
