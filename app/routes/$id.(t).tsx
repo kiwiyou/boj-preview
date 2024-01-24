@@ -14,14 +14,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     : undefined;
   return json({
     origin: new URL(request.url).origin,
-    id: params.id,
+    id: solvedJson.id,
     title: solvedJson.titleKo,
     level,
   });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
-  const title = `${data?.id}번: ${encodeURIComponent(data?.title)}`;
+  const title = `${data?.id}번: ${data?.title.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}`;
   const url = new URL(location.pathname, data?.origin).toString();
   const og = new URL(
     data?.level !== undefined
