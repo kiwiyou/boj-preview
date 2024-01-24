@@ -10,6 +10,36 @@ function loadFont(url: string) {
   return fetch(url).then((r) => r.arrayBuffer());
 }
 
+function expandSvg(element: string | JSX.Element): string | JSX.Element {
+  if (typeof element === 'string') {
+    return element;
+  }
+  if (
+    element.type === 'image' &&
+    element.props.href.startsWith('data:image/svg+xml;utf8,')
+  ) {
+    return cloneElement(element, {
+      href:
+        'data:image/svg+xml;base64,' +
+        btoa(
+          decodeURIComponent(
+            element.props.href
+              .slice('data:image/svg+xml;utf8,'.length)
+              .replace(/ /g, '%20'),
+          ),
+        ),
+    });
+  }
+  if (element.props.children) {
+    return cloneElement(
+      element,
+      {},
+      ...[element.props.children].flat().map(expandSvg),
+    );
+  }
+  return element;
+}
+
 const texRegex = /(?:\\\(|\$)(.+)(?:\\\)|\$)/g;
 const exRegex = /"([^"]+)ex"/g;
 let init = false;
@@ -34,6 +64,26 @@ export async function createImage(
   const pretendardBold = await loadFont(
     'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Bold.woff',
   );
+  const notoSansBold = await loadFont(
+    new URL('/NotoSansCJKkr-Bold.otf', url).toString(),
+  );
+  const fonts = [
+    {
+      name: 'Pretendard',
+      data: pretendardRegular,
+      weight: 400,
+    },
+    {
+      name: 'Pretendard',
+      data: pretendardBold,
+      weight: 600,
+    },
+    {
+      name: 'Noto Sans CJK KR',
+      data: notoSansBold,
+      weight: 600,
+    },
+  ];
 
   const emojis: Record<string, string> = {
     '🅰': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f170.svg',
@@ -87,7 +137,7 @@ export async function createImage(
   }
   const styledTitle = juice(
     firstRender
-      ? firstRender.replaceAll('<em', '<em style="font-style: italic;')
+      ? firstRender.replaceAll('<em', '<em style="font-style: italic;"')
       : '&nbsp;',
   );
   const htmlTitle = parseHTML(styledTitle);
@@ -100,7 +150,7 @@ export async function createImage(
           display: 'flex',
           width: 1000,
           justifyContent: 'center',
-          fontSize: 108,
+          fontSize: 54,
           fontWeight: 600,
           textAlign: 'center',
         }}
@@ -109,18 +159,7 @@ export async function createImage(
       </div>,
       {
         width: 1000,
-        fonts: [
-          {
-            name: 'Pretendard',
-            data: pretendardRegular,
-            weight: 400,
-          },
-          {
-            name: 'Pretendard',
-            data: pretendardBold,
-            weight: 600,
-          },
-        ],
+        fonts,
         embedFont: true,
       },
     );
@@ -140,18 +179,7 @@ export async function createImage(
       </div>,
       {
         width: 1000,
-        fonts: [
-          {
-            name: 'Pretendard',
-            data: pretendardRegular,
-            weight: 400,
-          },
-          {
-            name: 'Pretendard',
-            data: pretendardBold,
-            weight: 600,
-          },
-        ],
+        fonts,
         embedFont: true,
       },
     );
@@ -163,24 +191,14 @@ export async function createImage(
           fontSize: 108,
           fontWeight: 600,
           textAlign: 'center',
+          alignItems: 'center',
         }}
       >
         {htmlTitle}
       </div>,
       {
         height: 108,
-        fonts: [
-          {
-            name: 'Pretendard',
-            data: pretendardRegular,
-            weight: 400,
-          },
-          {
-            name: 'Pretendard',
-            data: pretendardBold,
-            weight: 600,
-          },
-        ],
+        fonts,
         embedFont: true,
       },
     );
@@ -193,11 +211,10 @@ export async function createImage(
       size = { height: 108 };
     }
   }
-  const titlePng = new Resvg(titleSvg, {
-    imageRendering: 1,
-  })
-    .render()
-    .asPng();
+  const subSvg = cloneElement(
+    expandSvg(parseHTML(titleSvg) as JSX.Element),
+    size,
+  );
   const icon =
     level &&
     (await fetch(`https://static.solved.ac/tier_small/${level}.svg`)
@@ -238,26 +255,12 @@ export async function createImage(
         )}
         <span>{id}</span>
       </div>
-      <img
-        src={`data:image/png;base64,${Buffer.from(titlePng).toString('base64')}`}
-        {...size}
-      />
+      {subSvg}
     </div>,
     {
       width: 1200,
       height: 630,
-      fonts: [
-        {
-          name: 'Pretendard',
-          data: pretendardRegular,
-          weight: 400,
-        },
-        {
-          name: 'Pretendard',
-          data: pretendardBold,
-          weight: 600,
-        },
-      ],
+      fonts,
       embedFont: true,
     },
   );

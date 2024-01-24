@@ -24,7 +24,7 @@ export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
   const title = `${data?.id}번: ${data?.title}`;
   const url = new URL(location.pathname, data?.origin).toString();
   const og = new URL(
-    data?.level
+    data?.level !== undefined
       ? `/og.png?id=${data?.id}&title=${encodeURIComponent(data?.title)}&level=${data?.level}`
       : `/og.png?id=${data?.id}&title=${encodeURIComponent(data?.title)}`,
     data?.origin,
