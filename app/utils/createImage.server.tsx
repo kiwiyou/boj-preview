@@ -19,10 +19,7 @@ export async function createImage(
 ) {
   if (!init) {
     init = true;
-    const hack = resvgWasm.replace(
-      '/build/_assets',
-      '/build/vercel/path0/_assets',
-    );
+    const hack = resvgWasm.replace('/build/_assets', '/build/_assets');
     const res = await fetch(new URL(hack, url));
     await initWasm(res.arrayBuffer());
   }
@@ -30,13 +27,14 @@ export async function createImage(
     'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
   );
   const pretendardBold = await loadFont(
-    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
+    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Bold.woff',
   );
 
   const emojis: Record<string, string> = {
     '🅰': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f170.svg',
     '➕': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2795.svg',
     '🅱': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f171.svg',
+    '🐜': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f41c.svg',
   };
   const emojiReplacement: Record<string, string> = {};
   await Promise.all(
@@ -78,8 +76,83 @@ export async function createImage(
   const mathTitle = emojiTitle.replaceAll(texRegex, (substr, math) =>
     tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`),
   );
-  const styledTitle = juice(mathTitle ? mathTitle : '&nbsp;');
+  const styledTitle = juice(
+    mathTitle
+      ? mathTitle.replaceAll('<em', '<em style="font-style: italic;')
+      : '&nbsp;',
+  );
   const htmlTitle = parseHTML(styledTitle);
+  const titleMultiline = await satori(
+    <div
+      style={{
+        display: 'flex',
+        maxWidth: 2000,
+        fontSize: 108,
+        fontWeight: 600,
+        textAlign: 'center',
+      }}
+    >
+      {htmlTitle}
+    </div>,
+    {
+      width: 2000,
+      fonts: [
+        {
+          name: 'Pretendard',
+          data: pretendardRegular,
+          weight: 400,
+        },
+        {
+          name: 'Pretendard',
+          data: pretendardBold,
+          weight: 600,
+        },
+      ],
+      embedFont: true,
+    },
+  );
+  const titleSingleLine = await satori(
+    <div
+      style={{
+        display: 'flex',
+        height: 108,
+        fontSize: 108,
+        fontWeight: 600,
+        textAlign: 'center',
+      }}
+    >
+      {htmlTitle}
+    </div>,
+    {
+      height: 108,
+      fonts: [
+        {
+          name: 'Pretendard',
+          data: pretendardRegular,
+          weight: 400,
+        },
+        {
+          name: 'Pretendard',
+          data: pretendardBold,
+          weight: 600,
+        },
+      ],
+      embedFont: true,
+    },
+  );
+  const svgWidth = +titleSingleLine.match(/width="(\d+)"/)![1];
+  const titleSvg =
+    svgWidth > 2000 ? (
+      <img
+        src={`data:image/svg+xml,${titleMultiline}`}
+        width="1000"
+        style={{
+          objectFit: 'contain',
+        }}
+      />
+    ) : (
+      <img src={`data:image/svg+xml,${titleSingleLine}`} height="108" />
+    );
   const icon =
     level &&
     (await fetch(`https://static.solved.ac/tier_small/${level}.svg`)
@@ -120,19 +193,7 @@ export async function createImage(
         )}
         <span>{id}</span>
       </div>
-      <div
-        style={{
-          display: 'flex',
-          maxWidth: 1000,
-          fontSize: 108,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          fontWeight: 600,
-        }}
-      >
-        {htmlTitle}
-      </div>
+      {titleSvg}
     </div>,
     {
       width: 1200,
