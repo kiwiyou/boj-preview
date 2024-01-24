@@ -3,6 +3,8 @@ import satori from 'satori';
 import parseHTML from 'html-react-parser';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
 import resvgWasm from '@resvg/resvg-wasm/index_bg.wasm';
+import { cloneElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 function loadFont(url: string) {
   return fetch(url).then((r) => r.arrayBuffer());
@@ -21,7 +23,7 @@ export async function createImage(
     init = true;
     const hack = resvgWasm.replace(
       '/build/_assets',
-      '/build/vercel/path0/_assets',
+      `/build/${process.env.HACK ?? ''}_assets`,
     );
     const res = await fetch(new URL(hack, url));
     await initWasm(res.arrayBuffer());
@@ -66,96 +68,136 @@ export async function createImage(
   for (const match of emojiTitle.matchAll(texRegex)) {
     mathReplacement.push(match[1]);
   }
-  const tex: Record<string, string> = await fetch(
-    'https://tex.jacob.workers.dev/json',
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        tex: mathReplacement,
-        key: true,
-      }),
-    },
-  ).then((r) => r.json());
-  const mathTitle = emojiTitle.replaceAll(texRegex, (substr, math) =>
-    tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`),
-  );
+  let firstRender = emojiTitle;
+  const hasMath = mathReplacement.length > 0;
+  if (hasMath) {
+    const tex: Record<string, string> = await fetch(
+      'https://tex.jacob.workers.dev/json',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          tex: mathReplacement,
+          key: true,
+        }),
+      },
+    ).then((r) => r.json());
+    firstRender = emojiTitle.replaceAll(texRegex, (substr, math) =>
+      tex[math].replaceAll(exRegex, (substr, size) => `"${size * 54}"`),
+    );
+  }
   const styledTitle = juice(
-    mathTitle
-      ? mathTitle.replaceAll('<em', '<em style="font-style: italic;')
+    firstRender
+      ? firstRender.replaceAll('<em', '<em style="font-style: italic;')
       : '&nbsp;',
   );
   const htmlTitle = parseHTML(styledTitle);
-  const titleMultiline = await satori(
-    <div
-      style={{
-        display: 'flex',
-        maxWidth: 2000,
-        fontSize: 108,
-        fontWeight: 600,
-        textAlign: 'center',
-      }}
-    >
-      {htmlTitle}
-    </div>,
-    {
-      width: 2000,
-      fonts: [
-        {
-          name: 'Pretendard',
-          data: pretendardRegular,
-          weight: 400,
-        },
-        {
-          name: 'Pretendard',
-          data: pretendardBold,
-          weight: 600,
-        },
-      ],
-      embedFont: true,
-    },
-  );
-  const titleSingleLine = await satori(
-    <div
-      style={{
-        display: 'flex',
-        height: 108,
-        fontSize: 108,
-        fontWeight: 600,
-        textAlign: 'center',
-      }}
-    >
-      {htmlTitle}
-    </div>,
-    {
-      height: 108,
-      fonts: [
-        {
-          name: 'Pretendard',
-          data: pretendardRegular,
-          weight: 400,
-        },
-        {
-          name: 'Pretendard',
-          data: pretendardBold,
-          weight: 600,
-        },
-      ],
-      embedFont: true,
-    },
-  );
-  const svgWidth = +titleSingleLine.match(/width="(\d+)"/)![1];
-  const titleSvg =
-    svgWidth > 2000 ? (
-      <img
-        src={`data:image/svg+xml,${titleMultiline}`}
-        width="1000"
+  let titleSvg;
+  let size;
+  if (hasMath) {
+    titleSvg = await satori(
+      <div
         style={{
-          objectFit: 'contain',
+          display: 'flex',
+          width: 2000,
+          justifyContent: 'center',
+          fontSize: 108,
+          fontWeight: 600,
+          textAlign: 'center',
         }}
-      />
-    ) : (
-      <img src={`data:image/svg+xml,${titleSingleLine}`} height="108" />
+      >
+        {htmlTitle}
+      </div>,
+      {
+        width: 2000,
+        fonts: [
+          {
+            name: 'Pretendard',
+            data: pretendardRegular,
+            weight: 400,
+          },
+          {
+            name: 'Pretendard',
+            data: pretendardBold,
+            weight: 600,
+          },
+        ],
+        embedFont: true,
+      },
     );
+    size = { width: 1000 };
+  } else {
+    const titleMultiline = await satori(
+      <div
+        style={{
+          display: 'flex',
+          width: 2000,
+          fontSize: 108,
+          fontWeight: 600,
+          textAlign: 'center',
+        }}
+      >
+        {htmlTitle}
+      </div>,
+      {
+        width: 2000,
+        fonts: [
+          {
+            name: 'Pretendard',
+            data: pretendardRegular,
+            weight: 400,
+          },
+          {
+            name: 'Pretendard',
+            data: pretendardBold,
+            weight: 600,
+          },
+        ],
+        embedFont: true,
+      },
+    );
+    const titleSingleLine = await satori(
+      <div
+        style={{
+          display: 'flex',
+          height: 108,
+          fontSize: 108,
+          fontWeight: 600,
+          textAlign: 'center',
+        }}
+      >
+        {htmlTitle}
+      </div>,
+      {
+        height: 108,
+        fonts: [
+          {
+            name: 'Pretendard',
+            data: pretendardRegular,
+            weight: 400,
+          },
+          {
+            name: 'Pretendard',
+            data: pretendardBold,
+            weight: 600,
+          },
+        ],
+        embedFont: true,
+      },
+    );
+    const svgWidth = +titleSingleLine.match(/width="(\d+)"/)![1];
+    if (svgWidth > 2000) {
+      titleSvg = titleMultiline;
+      size = { width: 1000 };
+    } else {
+      titleSvg = titleSingleLine;
+      size = { height: 108 };
+    }
+  }
+  const titlePng = new Resvg(titleSvg, {
+    imageRendering: 1,
+  })
+    .render()
+    .asPng();
   const icon =
     level &&
     (await fetch(`https://static.solved.ac/tier_small/${level}.svg`)
@@ -196,7 +238,10 @@ export async function createImage(
         )}
         <span>{id}</span>
       </div>
-      {titleSvg}
+      <img
+        src={`data:image/png;base64,${Buffer.from(titlePng).toString('base64')}`}
+        {...size}
+      />
     </div>,
     {
       width: 1200,

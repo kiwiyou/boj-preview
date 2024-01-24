@@ -6,31 +6,31 @@ settings:
 
 dependencies:
   '@remix-run/css-bundle':
-    specifier: ^2.0.0
+    specifier: ^2.5.1
     version: 2.5.1
   '@remix-run/node':
-    specifier: ^2.0.0
+    specifier: ^2.5.1
     version: 2.5.1(typescript@5.3.3)
   '@remix-run/react':
-    specifier: ^2.0.0
+    specifier: ^2.5.1
     version: 2.5.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)
   '@remix-run/serve':
-    specifier: ^2.0.0
+    specifier: ^2.5.1
     version: 2.5.1(typescript@5.3.3)
   '@resvg/resvg-wasm':
     specifier: ^2.6.0
     version: 2.6.0
   '@vercel/analytics':
-    specifier: ^1.0.2
+    specifier: ^1.1.2
     version: 1.1.2
   '@vercel/remix':
-    specifier: ^2.0.0
+    specifier: ^2.5.1
     version: 2.5.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)
   html-react-parser:
     specifier: ^5.1.1
     version: 5.1.1(react@18.2.0)
   isbot:
-    specifier: ^3.6.8
+    specifier: ^3.8.0
     version: 3.8.0
   juice:
     specifier: ^10.0.0
@@ -47,25 +47,25 @@ dependencies:
 
 devDependencies:
   '@remix-run/dev':
-    specifier: ^2.0.0
+    specifier: ^2.5.1
     version: 2.5.1(@remix-run/serve@2.5.1)(typescript@5.3.3)
   '@remix-run/eslint-config':
-    specifier: ^2.0.0
+    specifier: ^2.5.1
     version: 2.5.1(eslint@8.56.0)(react@18.2.0)(typescript@5.3.3)
   '@types/react':
-    specifier: ^18.2.20
+    specifier: ^18.2.48
     version: 18.2.48
   '@types/react-dom':
-    specifier: ^18.2.7
+    specifier: ^18.2.18
     version: 18.2.18
   eslint:
-    specifier: ^8.38.0
+    specifier: ^8.56.0
     version: 8.56.0
   prettier:
     specifier: ^3.2.4
     version: 3.2.4
   typescript:
-    specifier: ^5.1.6
+    specifier: ^5.3.3
     version: 5.3.3
 
 packages:
@@ -1144,7 +1144,7 @@ packages:
       chalk: 4.1.2
       chokidar: 3.5.3
       cross-spawn: 7.0.3
-      dotenv: 16.3.2
+      dotenv: 16.4.0
       es-module-lexer: 1.4.1
       esbuild: 0.17.6
       esbuild-plugins-node-modules-polyfill: 1.6.1(esbuild@0.17.6)
@@ -1547,8 +1547,8 @@ packages:
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
     dev: true
 
-  /@types/node@20.11.5:
-    resolution: {integrity: sha512-g557vgQjUUfN76MZAN/dt1z3dzcUsimuysco0KeluHgrPdJXkP/XdAURgyO2W9fZWHRtRBiVKzKn8vyOAwlG+w==}
+  /@types/node@20.11.6:
+    resolution: {integrity: sha512-+EOokTnksGVgip2PbYbr3xnR7kZigh4LbybAfBAw5BpnQ+FqBYUsvCEjYd70IXKlbohQ64mzEYmMtlWUY8q//Q==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -2111,7 +2111,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001579
-      electron-to-chromium: 1.4.642
+      electron-to-chromium: 1.4.643
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.2)
     dev: true
@@ -2636,8 +2636,8 @@ packages:
       domhandler: 5.0.3
     dev: false
 
-  /dotenv@16.3.2:
-    resolution: {integrity: sha512-HTlk5nmhkm8F6JcdXvHIzaorzCoziNQT9mGxLPVXW8wJF1TiGSL60ZGB4gHWabHOaMmWmhvk2/lPHfnBiT78AQ==}
+  /dotenv@16.4.0:
+    resolution: {integrity: sha512-WvImr5kpN5NGNn7KaDjJnLTh5rDVLZiDf/YLA8T1ZEZEBZNEDOE+mnkS0PVjPax8ZxBP5zC5SLMB3/9VV5de9g==}
     engines: {node: '>=12'}
     dev: true
 
@@ -2657,8 +2657,8 @@ packages:
   /ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  /electron-to-chromium@1.4.642:
-    resolution: {integrity: sha512-M4+u22ZJGpk4RY7tne6W+APkZhnnhmAH48FNl8iEFK2lEgob+U5rUQsIqQhvAwCXYpfd3H20pHK/ENsCvwTbsA==}
+  /electron-to-chromium@1.4.643:
+    resolution: {integrity: sha512-QHscvvS7gt155PtoRC0dR2ilhL8E9LHhfTQEq1uD5AL0524rBLAwpAREFH06f87/e45B9XkR6Ki5dbhbCsVEIg==}
     dev: true
 
   /emoji-regex@10.3.0:
@@ -3356,7 +3356,7 @@ packages:
     resolution: {integrity: sha512-EzV94NYKoO09GLXGjXj9JIlXijVck4ONSr5wiCWDvhsvj5jxSrzTmRU/9C1DyB6uToszLs8aifA6NQ7lEQdvFw==}
     engines: {node: '>= 0.8'}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.6
       require-like: 0.1.2
     dev: true
 
