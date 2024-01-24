@@ -269,6 +269,7 @@ export async function createImage(
           fontSize: 54,
           fontWeight: 600,
           textAlign: 'center',
+          alignItems: 'center',
         }}
       >
         {htmlTitle}
