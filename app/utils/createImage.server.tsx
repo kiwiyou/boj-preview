@@ -15,7 +15,7 @@ export async function createImage(
   url: string,
   id: string,
   title: string,
-  level?: string,
+  level: string | null,
 ) {
   if (!init) {
     init = true;
@@ -78,7 +78,7 @@ export async function createImage(
   const mathTitle = emojiTitle.replaceAll(texRegex, (substr, math) =>
     tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`),
   );
-  const styledTitle = juice(mathTitle);
+  const styledTitle = juice(mathTitle ? mathTitle : '&nbsp;');
   const htmlTitle = parseHTML(styledTitle);
   const icon =
     level &&
