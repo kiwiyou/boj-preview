@@ -159,7 +159,7 @@ export async function createImage(
       style: 'normal',
     },
     {
-      name: 'Inter Bold Italic',
+      name: 'Inter Bold',
       data: interBoldItalic,
       weight: 600,
       style: 'italic',
