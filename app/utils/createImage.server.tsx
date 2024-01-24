@@ -139,11 +139,8 @@ export async function createImage(
   const notoSansMonoBold = await loadFont(
     'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-mono@latest/latin-600-normal.woff',
   );
-  const notoSansKrBold = await loadFont(
-    'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-600-normal.woff',
-  );
-  const notoSansJpBold = await loadFont(
-    'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-jp@latest/japanese-600-normal.woff',
+  const notoSansCjkKrBold = await loadFont(
+    new URL('/NotoSansKR-Bold.otf', url).toString(),
   );
   const notoSansArabicBold = await loadFont(
     'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-arabic@latest/arabic-600-normal.woff',
@@ -181,13 +178,8 @@ export async function createImage(
       weight: 600,
     },
     {
-      name: 'Noto Sans KR',
-      data: notoSansKrBold,
-      weight: 600,
-    },
-    {
-      name: 'Noto Sans JP',
-      data: notoSansJpBold,
+      name: 'Noto Sans CJK KR',
+      data: notoSansCjkKrBold,
       weight: 600,
     },
     {
