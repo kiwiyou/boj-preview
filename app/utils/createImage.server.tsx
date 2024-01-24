@@ -82,7 +82,7 @@ export async function createImage(
       },
     ).then((r) => r.json());
     firstRender = emojiTitle.replaceAll(texRegex, (substr, math) =>
-      tex[math].replaceAll(exRegex, (substr, size) => `"${size * 54}"`),
+      tex[math].replaceAll(exRegex, (substr, size) => `"${size * 27}"`),
     );
   }
   const styledTitle = juice(
@@ -98,7 +98,7 @@ export async function createImage(
       <div
         style={{
           display: 'flex',
-          width: 2000,
+          width: 1000,
           justifyContent: 'center',
           fontSize: 108,
           fontWeight: 600,
@@ -108,7 +108,7 @@ export async function createImage(
         {htmlTitle}
       </div>,
       {
-        width: 2000,
+        width: 1000,
         fonts: [
           {
             name: 'Pretendard',
@@ -130,7 +130,7 @@ export async function createImage(
       <div
         style={{
           display: 'flex',
-          width: 2000,
+          width: 1000,
           fontSize: 108,
           fontWeight: 600,
           textAlign: 'center',
@@ -139,7 +139,7 @@ export async function createImage(
         {htmlTitle}
       </div>,
       {
-        width: 2000,
+        width: 1000,
         fonts: [
           {
             name: 'Pretendard',
@@ -185,7 +185,7 @@ export async function createImage(
       },
     );
     const svgWidth = +titleSingleLine.match(/width="(\d+)"/)![1];
-    if (svgWidth > 2000) {
+    if (svgWidth > 1000) {
       titleSvg = titleMultiline;
       size = { width: 1000 };
     } else {
