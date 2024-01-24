@@ -1,5 +1,5 @@
 import juice from 'juice';
-import satori from 'satori';
+import satori, { Font } from 'satori';
 import parseHTML from 'html-react-parser';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
 import resvgWasm from '@resvg/resvg-wasm/index_bg.wasm';
@@ -8,6 +8,25 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 function loadFont(url: string) {
   return fetch(url).then((r) => r.arrayBuffer());
+}
+
+function changeSpace(
+  element: string | JSX.Element | JSX.Element[],
+): string | JSX.Element | JSX.Element[] {
+  if (typeof element === 'string') {
+    return element.replace(/^ | $/g, '\u00A0');
+  }
+  if (element instanceof Array) {
+    return element.map(changeSpace) as JSX.Element[];
+  }
+  if (element.props.children) {
+    return cloneElement(
+      element,
+      {},
+      ...[element.props.children].flat().map(changeSpace),
+    );
+  }
+  return element;
 }
 
 function hrefToBase64(element: string | JSX.Element): string | JSX.Element {
@@ -57,13 +76,20 @@ function expandHref(element: string | JSX.Element): string | JSX.Element {
         element.props.href.slice('data:image/svg+xml;base64,'.length),
       );
     }
-    const nested = parseHTML(expanded);
+    const nested = parseHTML(expanded) as JSX.Element;
     const c = nested.props.children
       ? [nested.props.children].flat().map(expandHref)
       : undefined;
     return cloneElement(
       nested,
-      { ...element.props, ...nested.props, mask: '' },
+      {
+        ...element.props,
+        ...nested.props,
+        mask: '',
+        style: {
+          overflow: 'visible',
+        },
+      },
       c,
     );
   }
@@ -101,10 +127,49 @@ export async function createImage(
   const pretendardBold = await loadFont(
     'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Bold.woff',
   );
-  const notoSansBold = await loadFont(
-    new URL('/NotoSansCJKkr-Bold.otf', url).toString(),
+  const interLatinBold = await loadFont(
+    'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.woff',
   );
-  const fonts = [
+  const interLatinExtBold = await loadFont(
+    'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-ext-600-normal.woff',
+  );
+  const interBoldItalic = await loadFont(
+    new URL('/Inter-BoldItalic.otf', url).toString(),
+  );
+  const notoSansMonoBold = await loadFont(
+    'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-mono@latest/latin-600-normal.woff',
+  );
+  const notoSansKrBold = await loadFont(
+    'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-600-normal.woff',
+  );
+  const notoSansJpBold = await loadFont(
+    'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-jp@latest/japanese-600-normal.woff',
+  );
+  const notoSansArabicBold = await loadFont(
+    'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-arabic@latest/arabic-600-normal.woff',
+  );
+  const notoSansThaiBold = await loadFont(
+    'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-thai@latest/thai-600-normal.woff',
+  );
+  const fonts: Font[] = [
+    {
+      name: 'Inter Bold',
+      data: interLatinBold,
+      weight: 600,
+      style: 'normal',
+    },
+    {
+      name: 'Inter Bold Italic',
+      data: interBoldItalic,
+      weight: 600,
+      style: 'italic',
+    },
+    {
+      name: 'Inter Bold',
+      data: interLatinExtBold,
+      weight: 600,
+      style: 'normal',
+    },
     {
       name: 'Pretendard',
       data: pretendardRegular,
@@ -116,8 +181,28 @@ export async function createImage(
       weight: 600,
     },
     {
-      name: 'Noto Sans CJK KR',
-      data: notoSansBold,
+      name: 'Noto Sans KR',
+      data: notoSansKrBold,
+      weight: 600,
+    },
+    {
+      name: 'Noto Sans JP',
+      data: notoSansJpBold,
+      weight: 600,
+    },
+    {
+      name: 'Noto Sans Arabic',
+      data: notoSansArabicBold,
+      weight: 600,
+    },
+    {
+      name: 'Noto Sans Thai',
+      data: notoSansThaiBold,
+      weight: 600,
+    },
+    {
+      name: 'Noto Sans Mono',
+      data: notoSansMonoBold,
       weight: 600,
     },
   ];
@@ -144,7 +229,7 @@ export async function createImage(
       }
     }),
   );
-  let emojiTitle = title;
+  let emojiTitle = title.replace('<scoring>', '&lt;scoring&gt;');
   for (const key in emojiReplacement) {
     emojiTitle = emojiTitle.replaceAll(
       key,
@@ -174,10 +259,12 @@ export async function createImage(
   }
   const styledTitle = juice(
     firstRender
-      ? firstRender.replaceAll('<em', '<em style="font-style: italic;"')
+      ? firstRender
+          .replaceAll('<em', '<em style="font-style: italic;"')
+          .replaceAll('<code', `<code style="font-family: 'Noto Sans Mono';"`)
       : '&nbsp;',
   );
-  const htmlTitle = parseHTML(styledTitle);
+  const htmlTitle = changeSpace(parseHTML(styledTitle) as JSX.Element);
   let titleSvg;
   let size;
   if (hasMath) {
@@ -232,6 +319,7 @@ export async function createImage(
           textAlign: 'center',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: 24,
         }}
       >
         {htmlTitle}
@@ -252,7 +340,7 @@ export async function createImage(
     }
   }
   const subSvg = cloneElement(
-    hrefToBase64(parseHTML(titleSvg) as JSX.Element),
+    hrefToBase64(parseHTML(titleSvg) as JSX.Element) as JSX.Element,
     size,
   );
   const icon =
@@ -304,10 +392,14 @@ export async function createImage(
       embedFont: true,
     },
   );
-  return new Resvg(renderToStaticMarkup(expandHref(parseHTML(svg))), {
-    imageRendering: 1,
-    shapeRendering: 2,
-  })
+  return new Resvg(
+    renderToStaticMarkup(
+      expandHref(parseHTML(svg) as JSX.Element) as JSX.Element,
+    ),
+    {
+      imageRendering: 1,
+    },
+  )
     .render()
     .asPng();
 }
