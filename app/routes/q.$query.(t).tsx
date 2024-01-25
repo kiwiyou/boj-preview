@@ -2,20 +2,23 @@ import { LoaderFunctionArgs, MetaFunction, json } from '@vercel/remix';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const tier = request.url.endsWith('/t');
+  const query = (params.query as string).replaceAll('=', ' ');
   const solvedData = await fetch(
-    `https://solved.ac/api/v3/problem/show?problemId=${params.id}`,
+    `https://solved.ac/api/v3/search/problem?query=${encodeURIComponent(query)}`,
   );
   if (!solvedData.ok) throw new Response('Not Found', { status: 404 });
   const solvedJson: any = await solvedData.json();
+  if (solvedJson.count === 0) throw new Response('Not Found', { status: 404 });
+  const problem = solvedJson.items[0];
   const level = tier
-    ? solvedJson.level === 0 && solvedJson.isLevelLocked
+    ? problem.level === 0 && problem.isLevelLocked
       ? 'nr'
-      : solvedJson.level
+      : problem.level
     : undefined;
   return json({
     origin: new URL(request.url).origin,
-    id: solvedJson.problemId,
-    title: solvedJson.titleKo,
+    id: problem.problemId,
+    title: problem.titleKo,
     level,
   });
 }
