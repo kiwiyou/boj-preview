@@ -258,7 +258,7 @@ export async function createImage(
   );
   const htmlTitle = changeSpace(parseHTML(styledTitle) as JSX.Element);
   let titleSvg;
-  let size;
+  const size: Record<string, Number> = {};
   if (hasMath) {
     titleSvg = await satori(
       <div
@@ -280,7 +280,6 @@ export async function createImage(
         embedFont: true,
       },
     );
-    size = { width: 1000 };
   } else {
     const titleMultiline = await satori(
       <div
@@ -292,6 +291,7 @@ export async function createImage(
           textAlign: 'center',
           alignItems: 'center',
           justifyContent: 'center',
+          wordBreak: 'keep-all',
         }}
       >
         {htmlTitle}
@@ -323,13 +323,16 @@ export async function createImage(
         embedFont: true,
       },
     );
-    const svgWidth = +titleSingleLine.match(/width="(\d+)"/)![1];
-    if (svgWidth > 1000) {
+    const { width: svgWidth, height: svgHeight } = titleSingleLine.match(
+      /width="(?<width>\d+)" height="(?<height>\d+)"/,
+    )?.groups!;
+    if (+svgWidth > 2000) {
       titleSvg = titleMultiline;
-      size = { width: 1000 };
     } else {
       titleSvg = titleSingleLine;
-      size = { height: 108 };
+      const width = Math.min(+svgWidth, 1000);
+      size.width = width;
+      size.height = (+svgHeight * width) / +svgWidth;
     }
   }
   const subSvg = cloneElement(
@@ -385,14 +388,12 @@ export async function createImage(
       embedFont: true,
     },
   );
-  return new Resvg(
-    renderToStaticMarkup(
-      expandHref(parseHTML(svg) as JSX.Element) as JSX.Element,
-    ),
-    {
-      imageRendering: 1,
-    },
-  )
+  const expanded = renderToStaticMarkup(
+    expandHref(parseHTML(svg) as JSX.Element) as JSX.Element,
+  );
+  return new Resvg(expanded, {
+    imageRendering: 1,
+  })
     .render()
     .asPng();
 }
