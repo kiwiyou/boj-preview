@@ -16,7 +16,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   let level;
   if (tier) {
     const solvedData = await fetch(
-      `https://solved.ac/api/v3/problem/show?problemId=${params.id}`,
+      `https://solved.ac/api/v3/problem/show?problemId=${id}`,
     );
     if (!solvedData.ok) throw new Response('Not Found', { status: 404 });
     const solvedJson: any = await solvedData.json();
