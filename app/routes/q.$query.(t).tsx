@@ -22,7 +22,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       : problem.level
     : undefined;
   if (!isbot(request.headers.get('User-Agent'))) {
-    return redirect(`https://acmicpc.net/problem/${problem.problemId}`);
+    return redirect(`https://acmicpc.net/problem/${problem.problemId}`, 301);
   }
   return json({
     origin: new URL(request.url).origin,

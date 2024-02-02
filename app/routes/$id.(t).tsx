@@ -8,7 +8,7 @@ import isbot from 'isbot';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!isbot(request.headers.get('User-Agent'))) {
-    return redirect(`https://acmicpc.net/problem/${params.id}`);
+    return redirect(`https://acmicpc.net/problem/${params.id}`, 301);
   }
   const tier = request.url.endsWith('/t');
   const solvedData = await fetch(

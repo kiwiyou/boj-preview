@@ -1,3 +1,4 @@
+import { kv } from '@vercel/kv';
 import {
   LoaderFunctionArgs,
   MetaFunction,
@@ -7,44 +8,44 @@ import {
 import isbot from 'isbot';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  if (!isbot(request.headers.get('User-Agent'))) {
-    return redirect(`https://acmicpc.net/source/${params.source}`, 301);
-  }
-  const bojData = await fetch(
-    `https://www.acmicpc.net/status?top=${params.source}`,
-  );
-  if (!bojData.ok) throw new Response('Not Found', { status: 404 });
-  const bojHTML = await bojData.text();
-  const trBegin = bojHTML.indexOf(`solution-${params.source}`);
-  if (trBegin === -1) throw new Response('Not Found', { status: 404 });
-  const trEnd = bojHTML.indexOf('</tr>', trBegin);
-  const { title, id } = bojHTML
-    .slice(trBegin, trEnd)
-    .match(/problem\/(?<id>\d+).+?title="(?<title>[^"]+)"/)?.groups!;
   const tier = request.url.endsWith('/t');
-  let level;
-  if (tier) {
+  const query = (params.query as string).replaceAll('=', ' ');
+  let p = await kv.get<{ id: number; title: string; level: string | number }>(
+    query,
+  );
+  if (!p) {
     const solvedData = await fetch(
-      `https://solved.ac/api/v3/problem/show?problemId=${id}`,
+      `https://solved.ac/api/v3/search/problem?query=${encodeURIComponent(query)}&sort=random`,
     );
     if (!solvedData.ok) throw new Response('Not Found', { status: 404 });
     const solvedJson: any = await solvedData.json();
-    level =
-      solvedJson.level === 0 && solvedJson.isLevelLocked
+    if (solvedJson.count === 0)
+      throw new Response('Not Found', { status: 404 });
+    const problem = solvedJson.items[0];
+    const level = tier
+      ? problem.level === 0 && problem.isLevelLocked
         ? 'nr'
-        : solvedJson.level;
+        : problem.level
+      : undefined;
+    p = {
+      id: problem.problemId,
+      title: problem.titleKo,
+      level,
+    };
+    await kv.set(query, JSON.stringify(p));
+    await kv.expire(query, 60 * 60 * 24);
+  }
+  if (!isbot(request.headers.get('User-Agent'))) {
+    return redirect(`https://acmicpc.net/problem/${p.id}`);
   }
   return json({
     origin: new URL(request.url).origin,
-    source: params.source,
-    id,
-    title,
-    level,
+    ...p,
   });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
-  const title = `${data?.source}번 소스`;
+  const title = `${data?.id}번: ${data?.title}`;
   const url = new URL(location.pathname, data?.origin).toString();
   const og = new URL(
     data?.level !== undefined

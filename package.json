@@ -16,6 +16,7 @@
     "@remix-run/serve": "^2.5.1",
     "@resvg/resvg-wasm": "^2.6.0",
     "@vercel/analytics": "^1.1.2",
+    "@vercel/kv": "^1.0.1",
     "@vercel/remix": "^2.5.1",
     "html-react-parser": "^5.1.1",
     "isbot": "^3.8.0",
