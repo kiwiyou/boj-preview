@@ -1,6 +1,15 @@
-import { LoaderFunctionArgs, MetaFunction, json } from '@vercel/remix';
+import {
+  LoaderFunctionArgs,
+  MetaFunction,
+  json,
+  redirect,
+} from '@vercel/remix';
+import isbot from 'isbot';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  if (!isbot(request.headers.get('User-Agent'))) {
+    return redirect(`https://acmicpc.net/source/${params.source}`);
+  }
   const bojData = await fetch(
     `https://www.acmicpc.net/status?top=${params.source}`,
   );
@@ -44,10 +53,6 @@ export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
     data?.origin,
   ).toString();
   return [
-    {
-      httpEquiv: 'refresh',
-      content: `0; url=https://acmicpc.net/source/${data?.source}`,
-    },
     {
       title,
     },

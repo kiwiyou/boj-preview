@@ -1,4 +1,10 @@
-import { LoaderFunctionArgs, MetaFunction, json } from '@vercel/remix';
+import {
+  LoaderFunctionArgs,
+  MetaFunction,
+  json,
+  redirect,
+} from '@vercel/remix';
+import isbot from 'isbot';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const tier = request.url.endsWith('/t');
@@ -15,6 +21,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       ? 'nr'
       : problem.level
     : undefined;
+  if (!isbot(request.headers.get('User-Agent'))) {
+    return redirect(`https://acmicpc.net/problem/${problem.problemId}`);
+  }
   return json({
     origin: new URL(request.url).origin,
     id: problem.problemId,
@@ -33,10 +42,6 @@ export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
     data?.origin,
   ).toString();
   return [
-    {
-      httpEquiv: 'refresh',
-      content: `0; url=https://acmicpc.net/problem/${data?.id}`,
-    },
     {
       title,
     },
