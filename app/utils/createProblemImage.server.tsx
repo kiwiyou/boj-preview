@@ -134,13 +134,13 @@ export async function createImage(
     'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-ext-600-normal.woff',
   );
   const interBoldItalic = await loadFont(
-    new URL('/Inter-BoldItalic.otf', url).toString(),
+    'https://kiwiyou.github.io/boj-preview/public/Inter-BoldItalic.otf',
   );
   const notoSansMonoBold = await loadFont(
     'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-mono@latest/latin-600-normal.woff',
   );
   const notoSansCjkKrBold = await loadFont(
-    new URL('/NotoSansKR-Bold.otf', url).toString(),
+    'https://kiwiyou.github.io/boj-preview/public/NotoSansKR-Bold.otf',
   );
   const notoSansArabicBold = await loadFont(
     'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-arabic@latest/arabic-600-normal.woff',
