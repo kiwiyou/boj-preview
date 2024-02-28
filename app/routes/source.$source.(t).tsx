@@ -1,6 +1,6 @@
 import {
-  LoaderFunctionArgs,
-  MetaFunction,
+  type LoaderFunctionArgs,
+  type MetaFunction,
   json,
   redirect,
 } from '@vercel/remix';

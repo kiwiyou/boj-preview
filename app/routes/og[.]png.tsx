@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@vercel/remix';
 import { createImage } from '~/utils/createProblemImage.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {

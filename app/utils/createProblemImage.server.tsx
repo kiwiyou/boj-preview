@@ -1,8 +1,7 @@
 import juice from 'juice';
-import satori, { Font } from 'satori';
+import satori, { type Font } from 'satori';
 import parseHTML from 'html-react-parser';
-import { Resvg, initWasm } from '@resvg/resvg-wasm';
-import resvgWasm from '@resvg/resvg-wasm/index_bg.wasm';
+import { Resvg } from '@resvg/resvg-js';
 import { cloneElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -105,22 +104,13 @@ function expandHref(element: string | JSX.Element): string | JSX.Element {
 
 const texRegex = /(?:\\\(|\$)(.+)(?:\\\)|\$)/g;
 const exRegex = /"([^"]+)ex"/g;
-let init = false;
+
 export async function createImage(
   url: string,
   id: string,
   title: string,
   level: string | null,
 ) {
-  if (!init) {
-    init = true;
-    const hack = resvgWasm.replace(
-      '/build/_assets',
-      `/build/${process.env.HACK ?? ''}_assets`,
-    );
-    const res = await fetch(new URL(hack, url));
-    await initWasm(res.arrayBuffer());
-  }
   const pretendardRegular = await loadFont(
     'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/static/woff/Pretendard-Regular.woff',
   );
@@ -204,6 +194,7 @@ export async function createImage(
     '➕': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2795.svg',
     '🅱': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f171.svg',
     '🐜': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f41c.svg',
+    '🧩': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f9e9.svg',
   };
   const emojiReplacement: Record<string, string> = {};
   await Promise.all(
@@ -325,7 +316,7 @@ export async function createImage(
     );
     const { width: svgWidth, height: svgHeight } = titleSingleLine.match(
       /width="(?<width>\d+)" height="(?<height>\d+)"/,
-    )?.groups!;
+    )!.groups!;
     if (+svgWidth > 2000) {
       titleSvg = titleMultiline;
     } else {

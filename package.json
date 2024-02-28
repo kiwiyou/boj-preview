@@ -10,28 +10,28 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@remix-run/css-bundle": "^2.5.1",
-    "@remix-run/node": "^2.5.1",
-    "@remix-run/react": "^2.5.1",
-    "@remix-run/serve": "^2.5.1",
-    "@resvg/resvg-wasm": "^2.6.0",
-    "@vercel/analytics": "^1.1.2",
+    "@remix-run/css-bundle": "^2.7.2",
+    "@remix-run/node": "^2.7.2",
+    "@remix-run/react": "^2.7.2",
+    "@remix-run/serve": "^2.7.2",
+    "@resvg/resvg-js": "^2.6.0",
+    "@vercel/analytics": "^1.2.2",
     "@vercel/kv": "^1.0.1",
-    "@vercel/remix": "^2.5.1",
-    "html-react-parser": "^5.1.1",
+    "@vercel/remix": "^2.7.2",
+    "html-react-parser": "^5.1.8",
     "isbot": "^3.8.0",
     "juice": "^10.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "satori": "^0.10.11"
+    "satori": "^0.10.13"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.5.1",
-    "@remix-run/eslint-config": "^2.5.1",
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
-    "eslint": "^8.56.0",
-    "prettier": "^3.2.4",
+    "@remix-run/dev": "^2.7.2",
+    "@remix-run/eslint-config": "^2.7.2",
+    "@types/react": "^18.2.60",
+    "@types/react-dom": "^18.2.19",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
     "typescript": "^5.3.3"
   },
   "engines": {
