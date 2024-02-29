@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const title = `${data?.handle} 정보`;
   const url = data?.url;
   const og = data?.og;
