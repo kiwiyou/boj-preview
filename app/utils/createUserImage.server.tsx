@@ -147,8 +147,8 @@ export async function createUserImage(user: User) {
       />
       <div
         style={{
-          marginTop: -50,
-          height: 40,
+          marginTop: -100,
+          height: 80,
           background: '#ffffff',
           display: 'flex',
           flexDirection: 'row',
@@ -156,10 +156,10 @@ export async function createUserImage(user: User) {
           paddingRight: 100,
           alignItems: 'stretch',
           borderBottom: '1px solid rgb(221, 223, 224)',
-          fontSize: 15,
+          fontSize: 30,
           fontWeight: 600,
           color: 'rgb(138, 143, 149)',
-          gap: 16,
+          gap: 36,
         }}
       >
         <div
@@ -167,10 +167,10 @@ export async function createUserImage(user: User) {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 8,
+            gap: 16,
           }}
         >
-          <img src={tierImage} style={{ height: 18, width: 14 }} />
+          <img src={tierImage} style={{ height: 36, width: 28 }} />
           <span>문제해결</span>
         </div>
         <div
@@ -181,7 +181,7 @@ export async function createUserImage(user: User) {
             gap: 8,
           }}
         >
-          <img src={arenaImage} style={{ height: 16 }} />
+          <img src={arenaImage} style={{ height: 32 }} />
           <span>아레나</span>
         </div>
       </div>
@@ -195,54 +195,69 @@ export async function createUserImage(user: User) {
           paddingRight: 100,
         }}
       >
-        <img
-          src={profileImageUrl}
-          style={{
-            marginTop: -60,
-            marginRight: 40,
-            width: 120,
-            height: 120,
-            borderRadius: '50%',
-            boxShadow: `0px 8px 16px ${shadow}`,
-          }}
-        />
         <div
           style={{
             display: 'flex',
             flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 30,
-            marginBottom: 30,
+            alignItems: 'stretch',
+            marginBottom: 40,
           }}
         >
-          <div
-            style={{
-              fontSize: 36,
-              fontWeight: 600,
-            }}
-          >
-            {user.handle}
-          </div>
           <img
-            src={badgeImageUrl}
+            src={profileImageUrl}
             style={{
-              marginLeft: 20,
-              width: 60,
-              height: 60,
+              marginTop: -120,
+              marginRight: 40,
+              width: 240,
+              height: 240,
+              borderRadius: '50%',
+              boxShadow: `0px 16px 32px ${shadow}`,
             }}
           />
-          {classImage && (
-            <img
-              src={classImage}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <div
               style={{
-                marginLeft: 10,
-                width: 60,
-                height: 60,
+                fontSize: 54,
+                fontWeight: 600,
+              }}
+            >
+              {user.handle}
+            </div>
+            <img
+              src={badgeImageUrl}
+              style={{
+                marginLeft: 20,
+                width: 90,
+                height: 90,
               }}
             />
-          )}
+            {classImage && (
+              <img
+                src={classImage}
+                style={{
+                  marginLeft: 10,
+                  width: 90,
+                  height: 90,
+                }}
+              />
+            )}
+          </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 4, ...fill }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 4,
+            fontSize: 32,
+            ...fill,
+          }}
+        >
           <span style={{ fontWeight: 600 }}>{tierName(user.tier)}</span>
           <span>{user.rating}</span>
         </div>
@@ -250,14 +265,14 @@ export async function createUserImage(user: User) {
           style={{
             display: 'flex',
             background: 'rgb(11, 19, 27)',
-            borderRadius: 4,
-            height: 24,
-            marginTop: 8,
+            borderRadius: 9,
+            height: 48,
+            marginTop: 16,
           }}
         >
           <div
             style={{
-              borderRadius: 4,
+              borderRadius: 8,
               width: `${Math.min(100, ((user.rating - tierRating[user.tier]) * 100) / (tierRating[user.tier + 1] - tierRating[user.tier]))}%`,
               background: tierGradient[Math.floor((user.tier + 4) / 5)],
             }}
