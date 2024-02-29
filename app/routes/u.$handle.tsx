@@ -14,13 +14,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   og.searchParams.set('handle', params.handle || '');
   return json({
     handle: params.handle || '',
+    url: request.url,
     og: og.toString(),
   });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ location, data }) => {
   const title = `${data?.handle} 정보`;
-  const url = `https://acmicpc.net/user/${data?.handle}`;
+  const url = data?.url;
   const og = data?.og;
   return [
     {
