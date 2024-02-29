@@ -195,6 +195,7 @@ export async function createProblemImage(
     '🅱': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f171.svg',
     '🐜': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f41c.svg',
     '🧩': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f9e9.svg',
+    '🎵': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f3b5.svg'
   };
   const emojiReplacement: Record<string, string> = {};
   await Promise.all(
