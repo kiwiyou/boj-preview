@@ -4,7 +4,7 @@ import { Resvg } from '@resvg/resvg-js';
 export interface User {
   handle: string;
   class: number;
-  badgeId: string;
+  badgeId: string | null;
   backgroundId: string;
   profileImageUrl: string;
   solvedCount: number;
@@ -72,10 +72,14 @@ export async function createUserImage(user: User) {
     `https://solved.ac/api/v3/background/show?backgroundId=${user.backgroundId}`,
   );
   const { backgroundImageUrl } = await showBackground.json();
-  const showBadge = await fetch(
-    `https://solved.ac/api/v3/badge/show?badgeId=${user.badgeId}`,
-  );
-  const { badgeImageUrl } = await showBadge.json();
+  let badgeImageUrl;
+  if (user.badgeId) {
+    const showBadge = await fetch(
+      `https://solved.ac/api/v3/badge/show?badgeId=${user.badgeId}`,
+    );
+    const { badgeImageUrl: url } = await showBadge.json();
+    badgeImageUrl = url;
+  }
   const profileImageUrl =
     user.profileImageUrl ??
     'https://static.solved.ac/misc/360x360/default_profile.png';
@@ -225,18 +229,21 @@ export async function createUserImage(user: User) {
               style={{
                 fontSize: 54,
                 fontWeight: 600,
+                marginRight: 20,
               }}
             >
               {user.handle}
             </div>
-            <img
-              src={badgeImageUrl}
-              style={{
-                marginLeft: 20,
-                width: 90,
-                height: 90,
-              }}
-            />
+            {badgeImageUrl && (
+              <img
+                src={badgeImageUrl}
+                style={{
+                  marginLeft: 10,
+                  width: 90,
+                  height: 90,
+                }}
+              />
+            )}
             {classImage && (
               <img
                 src={classImage}
