@@ -36,5 +36,10 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "satori@0.10.13": "patches/satori@0.10.13.patch"
+    }
   }
 }

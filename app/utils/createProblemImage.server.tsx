@@ -105,7 +105,7 @@ function expandHref(element: string | JSX.Element): string | JSX.Element {
 const texRegex = /(?:\\\(|\$)(.+)(?:\\\)|\$)/g;
 const exRegex = /"([^"]+)ex"/g;
 
-export async function createImage(
+export async function createProblemImage(
   url: string,
   id: string,
   title: string,
