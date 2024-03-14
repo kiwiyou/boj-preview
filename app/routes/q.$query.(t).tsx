@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const level = tier
     ? problem.level === 0 && problem.isLevelLocked
       ? 'nr'
-      : problem.level
+      : (solvedJson.sprout ? 's' : '') + problem.level
     : undefined;
   if (!isbot(request.headers.get('User-Agent'))) {
     return redirect(`https://acmicpc.net/problem/${problem.problemId}`, 301);

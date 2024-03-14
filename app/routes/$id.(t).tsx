@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const level = tier
     ? solvedJson.level === 0 && solvedJson.isLevelLocked
       ? 'nr'
-      : solvedJson.level
+      : (solvedJson.sprout ? 's' : '') + solvedJson.level
     : undefined;
   return json({
     origin: new URL(request.url).origin,

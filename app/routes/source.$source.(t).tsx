@@ -32,7 +32,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     level =
       solvedJson.level === 0 && solvedJson.isLevelLocked
         ? 'nr'
-        : solvedJson.level;
+        : (solvedJson.sprout ? 's' : '') + solvedJson.level;
   }
   return json({
     origin: new URL(request.url).origin,
