@@ -385,9 +385,6 @@ export async function createProblemImage(
   const expanded = renderToStaticMarkup(
     expandHref(parseHTML(svg) as JSX.Element) as JSX.Element,
   );
-  throw new Response(expanded, {
-    headers: { 'Content-Type': 'image/svg+xml' },
-  });
   return new Resvg(expanded, {
     imageRendering: 1,
   })
