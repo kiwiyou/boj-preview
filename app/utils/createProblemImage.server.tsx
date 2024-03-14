@@ -82,9 +82,10 @@ function expandHref(element: string | JSX.Element): string | JSX.Element {
     return cloneElement(
       nested,
       {
-        ...element.props,
         ...nested.props,
-        mask: '',
+        ...element.props,
+        href: null,
+        mask: null,
         style: {
           overflow: 'visible',
         },
@@ -195,7 +196,7 @@ export async function createProblemImage(
     '🅱': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f171.svg',
     '🐜': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f41c.svg',
     '🧩': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f9e9.svg',
-    '🎵': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f3b5.svg'
+    '🎵': 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f3b5.svg',
   };
   const emojiReplacement: Record<string, string> = {};
   await Promise.all(
@@ -335,7 +336,7 @@ export async function createProblemImage(
     level &&
     (await fetch(`https://static.solved.ac/tier_small/${level}.svg`)
       .then((r) => r.text())
-      .then((svg) => svg.replaceAll(/[가-힣]/g, '')));
+      .then((svg) => svg.replaceAll(/[가-힣]/g, '').replaceAll('\n', '')));
   const svg = await satori(
     <div
       style={{
@@ -361,6 +362,7 @@ export async function createProblemImage(
           <>
             <img
               src={`data:image/svg+xml,${icon}`}
+              width="56.25"
               height="72"
               style={{
                 lineHeight: 72,
@@ -383,6 +385,9 @@ export async function createProblemImage(
   const expanded = renderToStaticMarkup(
     expandHref(parseHTML(svg) as JSX.Element) as JSX.Element,
   );
+  throw new Response(expanded, {
+    headers: { 'Content-Type': 'image/svg+xml' },
+  });
   return new Resvg(expanded, {
     imageRendering: 1,
   })
