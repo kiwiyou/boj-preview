@@ -12,6 +12,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
   const bojData = await fetch(
     `https://www.acmicpc.net/status?top=${params.source}`,
+    {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.114/115 Safari/537.36',
+      },
+    },
   );
   if (!bojData.ok) throw new Response('Not Found', { status: 404 });
   const bojHTML = await bojData.text();
@@ -20,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const trEnd = bojHTML.indexOf('</tr>', trBegin);
   const { title, id } = bojHTML
     .slice(trBegin, trEnd)
-    .match(/problem\/(?<id>\d+).+?title="(?<title>[^"]+)"/)?.groups!;
+    .match(/problem\/(?<id>\d+).+?title="(?<title>[^"]+)"/)!.groups!;
   const tier = request.url.endsWith('/t');
   let level;
   if (tier) {
