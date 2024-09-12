@@ -4,7 +4,7 @@ import { createProblemImage } from '~/utils/createProblemImage.server';
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
-  const title = url.searchParams.get('title');
+  const title = decodeURIComponent(url.searchParams.get('title')!);
   const level = url.searchParams.get('level');
   if (!id || !title) {
     return new Response('Bad Request', {

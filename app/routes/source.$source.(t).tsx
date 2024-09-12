@@ -1,14 +1,13 @@
 import {
+  json,
   type LoaderFunctionArgs,
   type MetaFunction,
-  json,
-  redirect,
 } from '@vercel/remix';
 import isbot from 'isbot';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!isbot(request.headers.get('User-Agent'))) {
-    return redirect(`https://acmicpc.net/source/${params.source}`, 301);
+    // return redirect(`https://acmicpc.net/source/${params.source}`, 301);
   }
   const bojData = await fetch(
     `https://www.acmicpc.net/status?top=${params.source}`,
@@ -19,6 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       },
     },
   );
+  console.log(bojData);
   if (!bojData.ok) throw new Response('Not Found', { status: 404 });
   const bojHTML = await bojData.text();
   const trBegin = bojHTML.indexOf(`solution-${params.source}`);
