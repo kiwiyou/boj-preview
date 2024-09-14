@@ -1,5 +1,6 @@
 import {
   json,
+  redirect,
   type LoaderFunctionArgs,
   type MetaFunction,
 } from '@vercel/remix';
@@ -7,7 +8,7 @@ import isbot from 'isbot';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!isbot(request.headers.get('User-Agent'))) {
-    // return redirect(`https://acmicpc.net/source/${params.source}`, 301);
+    return redirect(`https://acmicpc.net/source/${params.source}`, 301);
   }
   const bojData = await fetch(
     `https://www.acmicpc.net/status?top=${params.source}`,
