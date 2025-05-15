@@ -1,16 +1,17 @@
 {
-  "name": "boj-preview",
-  "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
-  },
-  "dependencies": {
-    "hono": "^4.7.9",
-    "isbot": "^5.1.28"
-  },
-  "devDependencies": {
-    "wrangler": "^4.4.0"
-  },
-  "packageManager": "pnpm@10.10.0"
+	"name": "boj-preview",
+	"scripts": {
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy --minify",
+		"cf-typegen": "wrangler types --env-interface CloudflareBindings"
+	},
+	"dependencies": {
+		"hono": "^4.7.9",
+		"isbot": "^5.1.28"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.0.0-beta.4",
+		"wrangler": "^4.4.0"
+	},
+	"packageManager": "pnpm@10.10.0"
 }
