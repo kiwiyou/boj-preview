@@ -31,6 +31,3 @@ lerna-debug.log*
 
 # misc
 .DS_Store
-
-# cf generated types
-/worker-configuration.d.ts
