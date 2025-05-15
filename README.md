@@ -1,38 +1,21 @@
-# Remix
-
-This directory is a brief example of a [Remix](https://remix.run/docs) site that can be deployed to Vercel with zero configuration.
-
-To get started, run the Remix cli with this template
-
-```sh
-npx create-remix@latest --template vercel/vercel/examples/remix
-```
-
-## Deploy Your Own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/examples/remix&template=remix)
-
-_Live Example: https://remix-run-template.vercel.app_
-
-You can also deploy using the [Vercel CLI](https://vercel.com/cli):
-
-```sh
-npm i -g vercel
-vercel
-```
-
-## Development
-
-To run your Remix app locally, make sure your project's local dependencies are installed:
-
-```sh
+```txt
 npm install
-```
-
-Afterwards, start the Remix development server like so:
-
-```sh
 npm run dev
 ```
 
-Open up [http://localhost:3000](http://localhost:3000) and you should be ready to go!
+```txt
+npm run deploy
+```
+
+[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
+
+```txt
+npm run cf-typegen
+```
+
+Pass the `CloudflareBindings` as generics when instantiation `Hono`:
+
+```ts
+// src/index.ts
+const app = new Hono<{ Bindings: CloudflareBindings }>()
+```

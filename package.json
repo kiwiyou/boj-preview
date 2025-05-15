@@ -1,45 +1,16 @@
 {
-  "name": "my-remix-app",
-  "private": true,
-  "sideEffects": false,
-  "type": "module",
+  "name": "boj-preview",
   "scripts": {
-    "build": "remix build",
-    "dev": "remix dev --manual",
-    "start": "remix-serve ./build/index.js",
-    "typecheck": "tsc"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
-    "@remix-run/css-bundle": "^2.8.1",
-    "@remix-run/node": "^2.8.1",
-    "@remix-run/react": "^2.8.1",
-    "@remix-run/serve": "^2.8.1",
-    "@resvg/resvg-js": "^2.6.0",
-    "@vercel/analytics": "^1.2.2",
-    "@vercel/kv": "^1.0.1",
-    "@vercel/remix": "^2.8.1",
-    "html-react-parser": "^5.1.8",
-    "isbot": "^3.8.0",
-    "juice": "^10.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "satori": "^0.10.13"
+    "hono": "^4.7.9",
+    "isbot": "^5.1.28"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.8.1",
-    "@remix-run/eslint-config": "^2.8.1",
-    "@types/react": "^18.2.65",
-    "@types/react-dom": "^18.2.22",
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.2"
+    "wrangler": "^4.4.0"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "satori@0.10.13": "patches/satori@0.10.13.patch"
-    }
-  }
+  "packageManager": "pnpm@10.10.0"
 }
